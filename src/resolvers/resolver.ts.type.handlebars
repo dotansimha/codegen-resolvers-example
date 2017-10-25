@@ -1,0 +1,56 @@
+import { Collection, Db } from 'mongodb';
+import * as moment from 'moment';
+
+{{#ifDirective this "resolvers" }}
+export default {
+  {{ name }}: {
+  {{#each fields}}
+    {{#ifDirective this "query" }}
+    {{ name }}: async (rootValue: any, args: any, { db }: { db: Db }): Promise<any{{#if isArray}}[]{{/if}}> => {
+      const collection: Collection = await db.collection('{{ collection }}');
+
+      {{#if isArray }}
+      return collection.find({{query}}).sort({{sort}}).{{#if limit}}limit({{limit}}).{{/if}}toArray();
+      {{else}}
+      return collection.findOne({{query}}).sort({{sort}});
+      {{/if}}
+    },
+    {{/ifDirective}}
+  {{/each}}
+  },
+};
+{{else}}
+  {{#ifDirective this "entity"}}
+export default {
+  {{ name }}: {
+  {{#each fields}}
+    {{#ifDirective this "map"}}
+    {{name}}: value => value.{{toField}},
+    {{/ifDirective}}
+    {{#ifDirective this "util"}}
+    {{#if fromContext}}
+    {{name}}: (value, args, context) => context.{{fromContext}}(value{{#if objectField}}.{{objectField}}{{/if}}, args),
+    {{/if~}}
+    {{#if momentFormat}}
+    {{name}}: (value, args, context) => moment(value{{#if objectField}}.{{objectField}}{{/if}}).format('{{momentFormat}}'),
+    {{/if~}}
+    {{/ifDirective}}
+    {{#ifDirective this "link"}}
+    {{name}}: async (value, args, { db }: { db: Db }): Promise<any{{#if isArray}}[]{{/if}}> => {
+      const collection: Collection = await db.collection('{{ collection }}');
+
+    {{#if isArray }}
+      return collection.find({ {{queryField}}: value.{{objectField}} }).toArray();
+    {{else}}
+      return collection.findOne({ {{queryField}}: value.{{objectField}} });
+    {{/if}}
+    },
+    {{/ifDirective}}
+  {{~/each}}
+  },
+};
+  {{else}}
+export default {};
+  {{/ifDirective}}
+
+{{/ifDirective}}

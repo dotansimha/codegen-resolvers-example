@@ -1,0 +1,31 @@
+{
+  "name": "codegen-resolvers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node src/main.ts",
+    "generate-typings": "gql-gen --export ./dist/generator/schema.js  --template ts --out ./src/types.d.ts",
+    "generator-resolvers": "gql-gen --export ./dist/generator/schema.js --project ./src/resolvers/",
+    "pregenerate": "tsc ./src/typedefs/schema.ts --outDir ./dist/generator/",
+    "generate": "yarn generate-typings && yarn generator-resolvers"
+  },
+  "dependencies": {
+    "@types/moment": "^2.13.0",
+    "@types/mongodb": "^2.2.15",
+    "@types/node": "^8.0.47",
+    "apollo-server-express": "^1.2.0",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "graphql": "0.10.5",
+    "graphql-code-generator": "0.9.0-alpha.0bf8d921",
+    "graphql-tag": "^2.5.0",
+    "graphql-tools": "1.2.2",
+    "merge-graphql-schemas-ts": "^1.1.4",
+    "moment": "^2.19.1",
+    "mongodb": "^2.2.33",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.3"
+  }
+}
