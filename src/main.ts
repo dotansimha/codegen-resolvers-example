@@ -22,7 +22,33 @@ const init = async () => {
       ...utils,
     },
   }));
-  app.get('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+  app.get('/graphiql', graphiqlExpress({
+    endpointURL: '/graphql',
+    query: `
+query {
+  posts {
+    id
+    title
+    author {
+      lastName
+      firstName
+      fullName
+    }
+    creationTime
+  }
+  
+  users {
+    id
+    firstName
+    lastName
+    posts {
+      id
+      title
+    }
+  }
+}
+    `
+  }));
 
   app.listen(PORT);
 };
